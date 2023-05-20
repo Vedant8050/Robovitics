@@ -1,0 +1,96 @@
+// C++ code
+//
+int ledDelay = 500; //how many time the leds gets HIGH
+int interDelay = 1; //how many time between led an the next one
+int leds[] = {2, 3, 4, 5, 6};
+int ON = 255;
+int OFF = 0;
+
+void setup() {
+  int i;
+  for (i = 0; i < 10; i = i + 1) {
+    pinMode(leds[i], OUTPUT);
+  }
+  //Serial.begin(9600);
+     
+}
+
+void askSensor() {
+  int sensorValue = analogRead(A0) + 1;
+  // print out the value you read:
+  //Serial.println(sensorValue/3+15);
+  delay(1);
+  ledDelay = (sensorValue / 3) + 15;
+}
+
+void moveLeft(){
+  int i;
+  //to the right
+  for (i = 8; i > 0; i = i - 1) {
+    askSensor();
+    analogWrite(leds[i - 1], ON);
+    analogWrite(leds[i], ON);
+    analogWrite(leds[i + 1], ON);
+    delay(ledDelay);
+    if (i == 1) {
+      //analogWrite(leds[i-1], OFF);
+      //analogWrite(leds[i], OFF);
+    }
+    analogWrite(leds[i + 1], OFF);
+    delay(interDelay);
+  }
+}
+
+void moveRight(){
+  int i;
+  //to the left
+  for (i = 0; i < 10; i = i + 1) {
+    askSensor();
+    if (i != 0 && i != 9) {
+      analogWrite(leds[i - 1], ON);
+      analogWrite(leds[i], ON);
+      analogWrite(leds[i + 1], ON);
+      delay(ledDelay);
+      analogWrite(leds[i - 1], OFF);
+      delay(interDelay);
+    } else {
+      if (i == 9) {
+        analogWrite(leds[i - 1], ON);
+        delay(ledDelay);
+        delay(interDelay);
+      }
+      else {
+        analogWrite(leds[i], ON);
+        analogWrite(leds[i + 1], ON);
+        delay(ledDelay);
+        delay(interDelay);
+      }
+    }
+  }
+}
+
+void moveInside(){
+  int i;
+    //inside
+  for (i = 0; i < 10; i = i + 1){
+    askSensor();
+    analogWrite(leds[i], ON);
+    analogWrite(leds[9-i], ON);
+    delay(ledDelay);
+    analogWrite(leds[i], OFF);
+    analogWrite(leds[9-i], OFF);
+  }
+}
+
+void loop() {
+  int num= random(4,8);
+  int i;
+  for(i=0;i<num;i++){
+    moveLeft();
+    moveRight();
+  }
+  moveInside();
+  moveInside();
+  moveInside();
+
+}
